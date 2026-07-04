@@ -56,6 +56,8 @@ uvicorn src.api:app --reload
 
 La documentación interactiva queda disponible en `http://localhost:8000/docs`.
 
+![Swagger UI de la API](docs/img/swagger_ui.png)
+
 ## Consumo de la API
 
 ```bash

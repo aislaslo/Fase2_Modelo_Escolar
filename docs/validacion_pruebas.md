@@ -83,7 +83,23 @@ GET  /health   -> 200 {"estado":"operativo"}
 POST /predict  -> 503 {"detail":"No se encontro el modelo en models/modelo_abandono.joblib..."}
 ```
 
-## 3. Pruebas de integración manual (curl)
+## 3. Pruebas de integración manual (curl y Swagger UI)
+
+### 3.1 Documentación interactiva (Swagger UI)
+
+FastAPI expone automáticamente una interfaz interactiva en `/docs`, generada a partir
+del esquema OpenAPI de la API (título, versión, endpoints `GET /health` y
+`POST /predict`, y los esquemas `EstudianteEntrada` / `PrediccionSalida` definidos en
+`src/schema.py`). Esta interfaz permite ejecutar peticiones reales contra la API desde
+el navegador, sin necesidad de un frontend dedicado, y constituye la evidencia visual
+de integración entre el contrato de datos, la lógica de inferencia y la capa HTTP.
+
+![Swagger UI de la API de Predicción de Abandono Escolar](./img/swagger_ui.png)
+
+*Captura tomada con la API corriendo localmente (`uvicorn src.api:app`) accediendo a
+`http://localhost:8000/docs`.*
+
+### 3.2 Peticiones manuales (curl)
 
 Ejecutadas contra la API corriendo localmente vía `uvicorn` (entorno virtual, sin
 Docker):
