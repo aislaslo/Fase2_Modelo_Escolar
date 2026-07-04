@@ -21,6 +21,70 @@ nube.
 └── requirements.txt
 ```
 
+## Diagrama de flujo
+
+Flujo completo desde el entrenamiento offline hasta el consumo de la API y su
+documentación, mostrando cómo se conectan el código fuente, el `Dockerfile` y los
+archivos de configuración, el contenedor en ejecución y los resultados/documentación
+generados.
+
+```mermaid
+flowchart TD
+    subgraph ENTRENAMIENTO["1. Entrenamiento offline (local)"]
+        A["src/generate_data.py<br/>dataset sintetico"]
+        B["data/dataset_abandono.csv"]
+        C["src/train.py<br/>Pipeline: StandardScaler + LogisticRegression"]
+        D["models/modelo_abandono.joblib"]
+        E["MLflow (mlruns/)<br/>experimento abandono_escolar_actividad6"]
+    end
+
+    subgraph CODIGO["2. Codigo de la API"]
+        F["src/schema.py<br/>EstudianteEntrada / PrediccionSalida"]
+        G["src/inference.py<br/>carga el .joblib + aplica umbral 0.40"]
+        H["src/api.py<br/>FastAPI: GET /health, POST /predict"]
+    end
+
+    subgraph CONTENEDOR["3. Contenerizacion"]
+        I["requirements.txt"]
+        J["Dockerfile"]
+        L[".dockerignore"]
+        K["Imagen Docker<br/>abandono-escolar-api"]
+        M["Contenedor en ejecucion<br/>puerto 8000"]
+    end
+
+    subgraph USO["4. Consumo"]
+        N["Cliente<br/>curl / Swagger UI ('/docs') / Postman"]
+        O["Respuesta JSON<br/>probabilidad, clase, nivel_riesgo"]
+    end
+
+    subgraph RESULTADOS["5. Validacion y documentacion"]
+        P["tests/test_api.py<br/>11 casos (pytest)"]
+        Q["docs/validacion_pruebas.md<br/>resultados, matriz de confusion, casos extremos"]
+        R["docs/documentacion_tecnica.md<br/>ISO/IEC 23053"]
+        S["docs/manual_despliegue.md<br/>estrategia PaaS (Render)"]
+    end
+
+    T["PaaS en la nube<br/>(Render)"]
+
+    A --> B --> C
+    C --> D
+    C --> E
+    F --> H
+    D --> G --> H
+    I --> K
+    J --> K
+    L --> K
+    H --> K
+    D --> K
+    K -->|"docker run -p 8000:8000"| M
+    N --> M --> O
+    P -.-> M
+    O --> Q
+    C -.-> Q
+    Q --> R --> S
+    M -.->|"despliegue documentado,<br/>no ejecutado"| T
+```
+
 ## Requisitos
 
 - Python 3.11 o superior
