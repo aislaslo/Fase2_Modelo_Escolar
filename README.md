@@ -77,6 +77,70 @@ Respuesta esperada:
 }
 ```
 
+## Resultados de la evaluación del modelo
+
+> Métricas obtenidas sobre el conjunto de prueba (20%, `random_state=42`) del dataset
+> sintético. Detalle completo y metodología en `docs/documentacion_tecnica.md` y
+> `docs/validacion_pruebas.md`.
+
+**Métricas generales (umbral 0.5, entrenamiento):**
+
+| Métrica | Valor obtenido | Referencia Actividad 6 |
+|---------|----------------|------------------------|
+| F1 (prueba) | 0.8493 | 0.8456 |
+| AUC-ROC | 0.9464 | 0.8660 |
+| F1 media (5-fold CV) | 0.8155 | 0.8376 |
+| Desv. estándar (5-fold CV) | 0.0422 | 0.0226 |
+
+**Distribución de clases (dataset completo, 1000 registros):**
+
+| Clase | Registros | Proporción |
+|-------|-----------|------------|
+| Continúa (0) | 641 | 64.1% |
+| Abandona (1) | 359 | 35.9% |
+
+**Matriz de confusión (umbral de decisión 0.40, el aplicado en producción):**
+
+| | Predicho: continúa | Predicho: abandona |
+|---|---|---|
+| **Real: continúa** | 105 (TN) | 23 (FP) |
+| **Real: abandona** | 7 (FN) | 65 (TP) |
+
+**Reporte de clasificación (umbral 0.40):**
+
+| Clase | Precision | Recall | F1 |
+|-------|-----------|--------|-----|
+| Continúa (0) | 0.9375 | 0.8203 | 0.8750 |
+| Abandona (1) | 0.7386 | 0.9028 | 0.8125 |
+| **Accuracy global** | | | **0.8500** |
+
+**Análisis de umbral** (por qué se usa 0.40 y no 0.5 por defecto):
+
+| Umbral | F1 | Precision | Recall |
+|--------|-----|-----------|--------|
+| 0.30 | 0.8023 | 0.6900 | 0.9583 |
+| **0.40** | **0.8125** | 0.7386 | **0.9028** |
+| 0.50 | 0.8493 | 0.8378 | 0.8611 |
+| 0.60 | 0.8060 | 0.8710 | 0.7500 |
+
+El umbral 0.40 prioriza el *recall* (detectar la mayor cantidad posible de estudiantes
+en riesgo real de abandono) a costa de algo de precisión, lo cual es preferible en este
+caso de uso: es más costoso no detectar a un estudiante que abandonará que generar
+algunas alertas de más para revisión de un coordinador.
+
+**Coeficientes del modelo** (Regresión Logística; variables numéricas escaladas):
+
+| Variable | Coeficiente | Efecto sobre el riesgo |
+|----------|-------------|-------------------------|
+| condicion_beca | -1.6265 | Disminuye |
+| promedio_academico | -1.4601 | Disminuye |
+| materias_reprobadas | +1.3360 | Aumenta |
+| horas_trabajo_semanales | +1.1902 | Aumenta |
+| asistencia | -0.7143 | Disminuye |
+| distancia_campus | +0.6901 | Aumenta |
+| modalidad (en línea) | +0.6280 | Aumenta |
+| semestre_actual | -0.1112 | Disminuye |
+
 ## Contenerización
 
 ```bash
