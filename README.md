@@ -220,6 +220,23 @@ docker run -d -p 8000:8000 --name abandono-escolar-api abandono-escolar-api
 pytest tests/ -v
 ```
 
+La suite (`tests/test_api.py`) cubre 11 casos funcionales y de borde:
+
+- **Disponibilidad del servicio:** `GET /health` responde correctamente.
+- **Predicción con perfil de riesgo alto:** entrada con bajo promedio, varias materias
+  reprobadas, baja asistencia y muchas horas de trabajo.
+- **Predicción con perfil de riesgo bajo:** entrada con buen promedio, sin materias
+  reprobadas, alta asistencia y con beca.
+- **Entrada incompleta:** solo se envía uno de los ocho campos requeridos.
+- **Valor fuera de rango superior:** `promedio_academico` mayor a 10.
+- **Valor fuera de rango inferior:** `asistencia` negativa.
+- **Valor negativo en un campo no negativo:** `materias_reprobadas` menor a 0.
+- **Valor fuera del enum permitido:** `modalidad` con un valor distinto de 0 o 1.
+- **Valores límite exactos:** `asistencia` en 0.0 y en 1.0 (deben aceptarse).
+- **Valor fuera de rango superior:** `horas_trabajo_semanales` mayor a 168.
+- **Modelo no disponible:** simula la ausencia del artefacto `.joblib` y verifica que
+  `/predict` falle de forma controlada en lugar de tumbar el servicio.
+
 ## Documentación adicional
 
 - [`docs/documentacion_tecnica.md`](docs/documentacion_tecnica.md) — documentación
