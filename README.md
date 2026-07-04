@@ -8,6 +8,31 @@ nube.
 
 > Alumno: Alejandro Islas López (matrícula T07136481).
 
+## Entregables de la Fase 2
+
+Mapa rápido de los requisitos de la actividad y dónde verificar cada uno en este
+repositorio:
+
+| Requisito | Dónde verificarlo |
+|---|---|
+| Repositorio en GitHub | Este repositorio |
+| Código fuente completo del proyecto | Carpeta [`src/`](src/) — ver "Contenido del repositorio" |
+| Dockerfile funcional | [`Dockerfile`](Dockerfile) — ver "Contenerización con Docker" |
+| Archivos de configuración necesarios | [`requirements.txt`](requirements.txt), [`.dockerignore`](.dockerignore), [`.gitignore`](.gitignore) |
+| Evidencia de integración (API, endpoints) | Sección "Evidencia de integración (API y endpoints)" |
+| Contenedor Docker funcional | Sección "Contenerización con Docker" + [`docs/validacion_pruebas.md`](docs/validacion_pruebas.md) sección 4 |
+| Imagen construida correctamente | [`docs/validacion_pruebas.md`](docs/validacion_pruebas.md) sección 4.1 |
+| Ejecución local comprobable | Secciones "Ejecución del servicio" y "Contenerización con Docker" |
+| Manual de despliegue en la nube | [`docs/manual_despliegue.md`](docs/manual_despliegue.md) |
+| Descripción del proceso paso a paso | [`docs/manual_despliegue.md`](docs/manual_despliegue.md), secciones 2 a 4 |
+| Requerimientos técnicos | Sección "Requisitos técnicos" + [`docs/manual_despliegue.md`](docs/manual_despliegue.md) sección 1 |
+| Estrategia de despliegue (contenedores, PaaS) | [`docs/manual_despliegue.md`](docs/manual_despliegue.md) sección 4 |
+| Uso de herramientas de documentación (IA generativa) | [`docs/manual_despliegue.md`](docs/manual_despliegue.md) sección 6 |
+| Documento de validación y pruebas | [`docs/validacion_pruebas.md`](docs/validacion_pruebas.md) |
+| Pruebas funcionales realizadas | Sección "Pruebas funcionales y casos extremos" + [`docs/validacion_pruebas.md`](docs/validacion_pruebas.md) sección 2 |
+| Casos extremos evaluados | Sección "Pruebas funcionales y casos extremos" + [`docs/validacion_pruebas.md`](docs/validacion_pruebas.md) sección 2.2 |
+| Resultados y conclusiones | [`docs/validacion_pruebas.md`](docs/validacion_pruebas.md) sección 5 |
+
 ## Contenido del repositorio
 
 ```
@@ -20,6 +45,11 @@ nube.
 ├── .dockerignore
 └── requirements.txt
 ```
+
+El código fuente completo del proyecto está en `src/` (generación de datos,
+entrenamiento y API) y `tests/` (pruebas). Los archivos de configuración necesarios
+para instalar dependencias y contenerizar son `requirements.txt`, `Dockerfile` y
+`.dockerignore`.
 
 ## Diagrama de flujo
 
@@ -85,7 +115,7 @@ flowchart TD
     M -.->|"despliegue documentado,<br/>no ejecutado"| T
 ```
 
-## Requisitos
+## Requisitos técnicos
 
 - Python 3.11 o superior
 - Docker (para contenerización y ejecución local del contenedor)
@@ -120,9 +150,14 @@ uvicorn src.api:app --reload
 
 La documentación interactiva queda disponible en `http://localhost:8000/docs`.
 
-![Swagger UI de la API](docs/img/swagger_ui.png)
+## Evidencia de integración (API y endpoints)
 
-## Consumo de la API
+El servicio expone dos endpoints (`GET /health`, `POST /predict`) documentados
+automáticamente por FastAPI. La captura y el ejemplo de consumo siguientes muestran la
+integración funcionando de extremo a extremo: esquema de entrada/salida, validación y
+respuesta del modelo.
+
+![Swagger UI de la API](docs/img/swagger_ui.png)
 
 ```bash
 curl -X POST http://localhost:8000/predict \
@@ -142,6 +177,10 @@ Respuesta esperada:
   "nivel_riesgo": "alto"
 }
 ```
+
+Evidencia adicional de integración (peticiones reales contra el contenedor Docker en
+ejecución, con logs de Uvicorn) está documentada en
+[`docs/validacion_pruebas.md`](docs/validacion_pruebas.md), secciones 3 y 4.3.
 
 ## Resultados de la evaluación del modelo
 
@@ -207,26 +246,38 @@ algunas alertas de más para revisión de un coordinador.
 | modalidad (en línea) | +0.6280 | Aumenta |
 | semestre_actual | -0.1112 | Disminuye |
 
-## Contenerización
+## Contenerización con Docker
 
 ```bash
 docker build -t abandono-escolar-api .
 docker run -d -p 8000:8000 --name abandono-escolar-api abandono-escolar-api
 ```
 
-## Pruebas
+El `Dockerfile` es funcional: la imagen construye sin errores y el contenedor sirve la
+API de forma idéntica al entorno local. Evidencia real de la construcción de la imagen
+y de la ejecución del contenedor (logs, códigos de respuesta de `/health` y
+`/predict`) está documentada en
+[`docs/validacion_pruebas.md`](docs/validacion_pruebas.md), sección 4.
+
+## Pruebas funcionales y casos extremos
 
 ```bash
 pytest tests/ -v
 ```
 
-La suite (`tests/test_api.py`) cubre 11 casos funcionales y de borde:
+La suite (`tests/test_api.py`, 11 casos) se divide en dos grupos, alineados con el
+documento de validación ([`docs/validacion_pruebas.md`](docs/validacion_pruebas.md)):
+
+### Pruebas funcionales realizadas
 
 - **Disponibilidad del servicio:** `GET /health` responde correctamente.
 - **Predicción con perfil de riesgo alto:** entrada con bajo promedio, varias materias
   reprobadas, baja asistencia y muchas horas de trabajo.
 - **Predicción con perfil de riesgo bajo:** entrada con buen promedio, sin materias
   reprobadas, alta asistencia y con beca.
+
+### Casos extremos evaluados
+
 - **Entrada incompleta:** solo se envía uno de los ocho campos requeridos.
 - **Valor fuera de rango superior:** `promedio_academico` mayor a 10.
 - **Valor fuera de rango inferior:** `asistencia` negativa.
@@ -237,12 +288,19 @@ La suite (`tests/test_api.py`) cubre 11 casos funcionales y de borde:
 - **Modelo no disponible:** simula la ausencia del artefacto `.joblib` y verifica que
   `/predict` falle de forma controlada en lugar de tumbar el servicio.
 
-## Documentación adicional
+Resultados detallados y conclusiones de estas pruebas:
+[`docs/validacion_pruebas.md`](docs/validacion_pruebas.md), sección 5.
 
+## Documentación completa
+
+- [`docs/manual_despliegue.md`](docs/manual_despliegue.md) — **Manual de despliegue en
+  la nube**: requerimientos técnicos, descripción del proceso paso a paso (ejecución
+  local, construcción de la imagen, publicación en GitHub), estrategia de despliegue
+  (contenedores + PaaS con Render) y uso de herramientas de IA generativa para la
+  documentación.
 - [`docs/documentacion_tecnica.md`](docs/documentacion_tecnica.md) — documentación
   alineada con ISO/IEC 23053: propósito, diseño, datos, verificación, operación y fin
   de vida útil del sistema.
-- [`docs/manual_despliegue.md`](docs/manual_despliegue.md) — manual paso a paso de
-  ejecución local, contenerización y estrategia de despliegue en PaaS (Render).
-- [`docs/validacion_pruebas.md`](docs/validacion_pruebas.md) — pruebas funcionales,
-  casos extremos evaluados, resultados y conclusiones.
+- [`docs/validacion_pruebas.md`](docs/validacion_pruebas.md) — **Documento de
+  validación y pruebas**: pruebas funcionales realizadas, casos extremos evaluados,
+  evidencia de integración y contenerización, resultados y conclusiones.
