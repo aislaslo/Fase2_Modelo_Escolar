@@ -1,11 +1,11 @@
 # Manual de Despliegue — API de Predicción de Abandono Escolar
 
-> Cubre: ejecución local, contenerización con Docker y estrategia de despliegue en la
-> nube bajo el modelo PaaS, conforme al Tema 16 (Módulo 2, Semana 8) del curso.
-> El despliegue en la nube descrito aquí es **demostrativo**: se documenta el
-> procedimiento completo, pero no se ejecutó un despliegue real en esta entrega,
-> conforme a la advertencia del propio material del curso (las actividades de nube no
-> son obligatorias para la evaluación final).
+> Cubre: ejecución local, contenerización con Docker y despliegue en la nube bajo el
+> modelo PaaS, conforme al Tema 16 (Módulo 2, Semana 8) del curso. El despliegue en la
+> nube se **ejecutó realmente** sobre Render; la API pública está disponible en:
+>
+> **https://fase2-abandono-escolar.onrender.com** (documentación interactiva en
+> [`/docs`](https://fase2-abandono-escolar.onrender.com/docs)).
 
 ---
 
@@ -18,7 +18,7 @@
 | Contenedores | Docker Engine / Docker Desktop |
 | Control de versiones | Git, repositorio en GitHub |
 | Cuenta en plataforma PaaS | Render (o equivalente: Railway, Fly.io) |
-| Puerto expuesto por el servicio | 8000 (HTTP) |
+| Puerto expuesto por el servicio | 8000 en local; `$PORT` (asignado por Render) en la nube |
 
 ## 2. Ejecución local sin Docker
 
@@ -77,29 +77,41 @@ curl -X POST http://localhost:8000/predict \
 Evidencia real de esta verificación (build, ejecución y respuesta de endpoints) se
 documenta en [`docs/validacion_pruebas.md`](./validacion_pruebas.md).
 
-## 4. Estrategia de despliegue en la nube (PaaS)
+## 4. Despliegue en la nube (PaaS)
 
-Se elige **Render** como plataforma de referencia: modelo de servicio **PaaS**
-(coherente con el enfoque del Tema 16), soporta despliegue directo desde un
-`Dockerfile` en un repositorio de GitHub, ofrece un plan gratuito suficiente para fines
-demostrativos y no requiere gestión manual de infraestructura subyacente.
+Se eligió **Render** como plataforma: modelo de servicio **PaaS** (coherente con el
+enfoque del Tema 16), soporta despliegue directo desde un `Dockerfile` en un
+repositorio de GitHub, ofrece un plan gratuito suficiente para este proyecto y no
+requiere gestión manual de infraestructura subyacente. El despliegue se ejecutó
+realmente sobre este servicio (no es solo un procedimiento documentado).
 
-### 4.1 Pasos de despliegue (procedimiento documentado)
+### 4.1 Pasos de despliegue (ejecutados)
 
 1. Publicar el repositorio (código fuente, `Dockerfile`, `models/modelo_abandono.joblib`)
    en GitHub — ver sección 5.
-2. En Render, crear un nuevo **Web Service** y conectarlo al repositorio de GitHub.
-3. Seleccionar **Docker** como entorno de ejecución (Render detecta el `Dockerfile`
+2. Crear cuenta en Render con **Sign up with GitHub** y autorizar acceso al repositorio.
+3. En Render, **New +** → **Web Service** → seleccionar el repositorio
+   `aislaslo/Fase2_Modelo_Escolar`.
+4. Render detectó automáticamente **Docker** como entorno de ejecución (por la
+   presencia del `Dockerfile` en la raíz del repo); no fue necesario configurarlo
+   manualmente.
+5. Configuración del servicio: rama `main`, root directory vacío, instance type
+   **Free**, sin variables de entorno adicionales (Render inyecta `PORT`
    automáticamente).
-4. Configurar variables de entorno si aplica (no se requieren para esta API; el modelo
-   se carga desde el sistema de archivos de la imagen).
-5. Definir el puerto expuesto: 8000 (Render inyecta la variable `PORT`; si se despliega
-   realmente, ajustar el `CMD` del contenedor para usar `--port $PORT` en lugar de un
-   puerto fijo, o configurar el servicio para mapear el puerto 8000 expuesto).
-6. Disparar el despliegue (Render construye la imagen a partir del `Dockerfile` y la
-   ejecuta).
-7. Verificar disponibilidad accediendo a `https://<nombre-del-servicio>.onrender.com/health`.
-8. Repetir las pruebas funcionales de la sección 3.3 contra la URL pública.
+6. Ajuste de código necesario antes del despliegue: el `CMD` del `Dockerfile` tenía el
+   puerto fijo en 8000. Se cambió a
+   `CMD ["sh", "-c", "uvicorn src.api:app --host 0.0.0.0 --port ${PORT:-8000}"]` para
+   leer el puerto que Render asigna dinámicamente vía la variable de entorno `PORT`,
+   manteniendo el valor 8000 como default para ejecución local. Verificado localmente
+   con `docker run -e PORT=10000 ...` antes de subir el cambio.
+7. Click en **Deploy web service**: Render construyó la imagen a partir del
+   `Dockerfile` (mismo proceso que en local, ver sección 3.1) y la desplegó.
+8. Verificación de disponibilidad: el log de despliegue confirmó
+   `Uvicorn running on http://0.0.0.0:10000` (puerto asignado por Render) y el mensaje
+   `Your service is live`, con la URL pública
+   `https://fase2-abandono-escolar.onrender.com`.
+9. Se repitieron las pruebas funcionales de la sección 3.3 contra la URL pública (ver
+   evidencia en [`docs/validacion_pruebas.md`](./validacion_pruebas.md), sección 6).
 
 ### 4.2 Consideraciones de escalabilidad y seguridad (Tema 16)
 
@@ -112,9 +124,10 @@ demostrativos y no requiere gestión manual de infraestructura subyacente.
   se mantiene en PaaS público.
 - **Escalabilidad:** Render permite escalar horizontalmente el servicio (más
   instancias) sin cambios en el código, dado que la API es *stateless*.
-- **Seguridad mínima recomendada antes de un despliegue real:** restringir CORS a los
-  orígenes del frontend institucional, y añadir autenticación (API key o JWT) en
-  `/predict`, ya que la versión actual no implementa control de acceso.
+- **Seguridad mínima recomendada antes de usar esto con datos reales de estudiantes:**
+  restringir CORS a los orígenes del frontend institucional, y añadir autenticación
+  (API key o JWT) en `/predict`, ya que la versión actualmente desplegada no implementa
+  control de acceso (aceptable para esta entrega, que usa datos sintéticos).
 
 ### 4.3 Alternativas consideradas
 
@@ -144,4 +157,5 @@ Este manual, la documentación técnica ISO/IEC 23053 y el documento de validaci
 redactaron con apoyo de **Claude Code** (Anthropic) como asistente de código en VS Code,
 siguiendo el enfoque sugerido en el Tema 16 de usar IA generativa para estructurar la
 documentación técnica del despliegue. Cada fase (dataset, entrenamiento, API,
-contenerización, pruebas) fue ejecutada y verificada localmente antes de documentarse.
+contenerización, pruebas, despliegue en Render) fue ejecutada y verificada —local o en
+la nube, según corresponda— antes de documentarse.

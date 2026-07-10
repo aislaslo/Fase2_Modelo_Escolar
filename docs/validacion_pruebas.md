@@ -172,6 +172,48 @@ imagen se conserva para su publicación.
 - Durante la validación se identificó y corrigió un defecto real (fallo de arranque
   ante modelo ausente), lo que confirma el valor de ejecutar las pruebas de casos
   extremos antes de considerar el sistema listo para documentar su despliegue.
-- **Limitación abierta:** no se ejecutó un despliegue real en un PaaS (ver
-  `docs/manual_despliegue.md`); la estrategia de nube está documentada pero no
-  verificada end-to-end contra una URL pública.
+- Se identificó y corrigió un segundo defecto antes del despliegue real en la nube: el
+  `Dockerfile` tenía el puerto fijo en 8000, incompatible con el puerto dinámico que
+  asigna Render vía la variable `PORT`. Corregido y verificado localmente antes de
+  desplegar (ver sección 6).
+- El despliegue en la nube (Render) se ejecutó realmente y se verificó end-to-end
+  contra la URL pública; ver evidencia en la sección 6.
+
+## 6. Despliegue en la nube (Render) — evidencia
+
+URL pública: **https://fase2-abandono-escolar.onrender.com**
+
+### 6.1 Log de despliegue (fragmento relevante)
+
+```
+==> Deploying...
+==> Setting WEB_CONCURRENCY=1 by default, based on available CPUs in the instance
+INFO:     Started server process [7]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:10000
+==> Your service is live 🎉
+==> Available at your primary URL https://fase2-abandono-escolar.onrender.com
+INFO:     10.238.24.12:50360 - "GET /health HTTP/1.1" 200 OK
+```
+
+El puerto `10000` confirma que Render asignó el puerto dinámicamente vía `$PORT` y que
+el `Dockerfile` corregido lo respetó correctamente (antes del fix, el contenedor
+escuchaba siempre en 8000 sin importar el valor de `PORT`).
+
+### 6.2 Verificación de endpoints contra la URL pública
+
+```
+GET  /health   -> 200 {"estado":"operativo"}
+
+POST /predict  (riesgo alto: promedio 5.5, 4 reprobadas, asistencia 0.60, trabaja 35h)
+-> 200 {"probabilidad_abandono":0.9999,"clase_predicha":1,"umbral_aplicado":0.4,"nivel_riesgo":"alto"}
+
+GET  /docs     -> 200 (Swagger UI accesible públicamente)
+```
+
+**Conclusión:** el despliegue en PaaS (Render) es funcional de extremo a extremo:
+build desde el `Dockerfile` del repositorio, arranque del contenedor, asignación
+dinámica de puerto y respuesta correcta de los tres endpoints verificados
+públicamente, sin intervención manual más allá de la configuración inicial del
+servicio en el dashboard de Render.

@@ -3,10 +3,15 @@
 Servicio de inferencia del modelo de Regresión Logística desarrollado en la
 Actividad 6 del curso **Gestión de Proyectos de Inteligencia Artificial**
 (Universidad Tecmilenio). Esta Fase 2 contieneriza el modelo, lo expone como API
-REST, valida su funcionamiento local y documenta la estrategia de despliegue en la
-nube.
+REST, valida su funcionamiento local y la despliega en la nube.
 
 > Alumno: Alejandro Islas López (matrícula T07136481).
+
+**API desplegada y disponible públicamente en Render:**
+**https://fase2-abandono-escolar.onrender.com** — documentación interactiva en
+[`/docs`](https://fase2-abandono-escolar.onrender.com/docs).
+> El plan gratuito de Render suspende el servicio tras inactividad; la primera
+> petición después de un rato puede tardar ~30-50 s en responder mientras despierta.
 
 ## Entregables de la Fase 2
 
@@ -26,7 +31,7 @@ repositorio:
 | Manual de despliegue en la nube | [`docs/manual_despliegue.md`](docs/manual_despliegue.md) |
 | Descripción del proceso paso a paso | [`docs/manual_despliegue.md`](docs/manual_despliegue.md), secciones 2 a 4 |
 | Requerimientos técnicos | Sección "Requisitos técnicos" + [`docs/manual_despliegue.md`](docs/manual_despliegue.md) sección 1 |
-| Estrategia de despliegue (contenedores, PaaS) | [`docs/manual_despliegue.md`](docs/manual_despliegue.md) sección 4 |
+| Estrategia de despliegue (contenedores, PaaS) — **ejecutada, API en vivo** | Sección "Despliegue en la nube (Render)" + [`docs/manual_despliegue.md`](docs/manual_despliegue.md) sección 4 |
 | Uso de herramientas de documentación (IA generativa) | [`docs/manual_despliegue.md`](docs/manual_despliegue.md) sección 6 |
 | Documento de validación y pruebas | [`docs/validacion_pruebas.md`](docs/validacion_pruebas.md) |
 | Pruebas funcionales realizadas | Sección "Pruebas funcionales y casos extremos" + [`docs/validacion_pruebas.md`](docs/validacion_pruebas.md) sección 2 |
@@ -94,7 +99,7 @@ flowchart TD
         S["docs/manual_despliegue.md<br/>estrategia PaaS (Render)"]
     end
 
-    T["PaaS en la nube<br/>(Render)"]
+    T["PaaS en la nube<br/>fase2-abandono-escolar.onrender.com"]
 
     A --> B --> C
     C --> D
@@ -112,7 +117,7 @@ flowchart TD
     O --> Q
     C -.-> Q
     Q --> R --> S
-    M -.->|"despliegue documentado,<br/>no ejecutado"| T
+    M -.->|"docker build + deploy<br/>en Render"| T
 ```
 
 ## Requisitos técnicos
@@ -258,6 +263,28 @@ API de forma idéntica al entorno local. Evidencia real de la construcción de l
 y de la ejecución del contenedor (logs, códigos de respuesta de `/health` y
 `/predict`) está documentada en
 [`docs/validacion_pruebas.md`](docs/validacion_pruebas.md), sección 4.
+
+## Despliegue en la nube (Render)
+
+La API está desplegada realmente en Render a partir de este mismo `Dockerfile`, sin
+pasos manuales adicionales: **https://fase2-abandono-escolar.onrender.com**
+
+```bash
+curl https://fase2-abandono-escolar.onrender.com/health
+# {"estado":"operativo"}
+
+curl -X POST https://fase2-abandono-escolar.onrender.com/predict \
+  -H "Content-Type: application/json" \
+  -d '{"promedio_academico": 5.5, "materias_reprobadas": 4, "asistencia": 0.60,
+       "condicion_beca": 0, "distancia_campus": 30.0, "horas_trabajo_semanales": 35,
+       "semestre_actual": 2, "modalidad": 1}'
+```
+
+El único cambio de código necesario para el despliegue fue leer el puerto dinámico que
+asigna Render (`$PORT`) en el `CMD` del `Dockerfile`, en lugar del puerto fijo 8000
+usado para ejecución local. Procedimiento completo, configuración del servicio y
+evidencia del log de despliegue: [`docs/manual_despliegue.md`](docs/manual_despliegue.md)
+sección 4 y [`docs/validacion_pruebas.md`](docs/validacion_pruebas.md) sección 6.
 
 ## Pruebas funcionales y casos extremos
 
