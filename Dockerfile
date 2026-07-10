@@ -16,4 +16,6 @@ COPY models/ ./models/
 
 EXPOSE 8000
 
-CMD ["uvicorn", "src.api:app", "--host", "0.0.0.0", "--port", "8000"]
+# Usa $PORT si el entorno lo define (ej. Render), y 8000 como valor por
+# defecto para ejecucion local (docker run -p 8000:8000 ...).
+CMD ["sh", "-c", "uvicorn src.api:app --host 0.0.0.0 --port ${PORT:-8000}"]
