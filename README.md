@@ -290,6 +290,71 @@ usado para ejecución local. Procedimiento completo, configuración del servicio
 evidencia del log de despliegue: [`docs/manual_despliegue.md`](docs/manual_despliegue.md)
 sección 4 y [`docs/validacion_pruebas.md`](docs/validacion_pruebas.md) sección 6.
 
+## Ejemplos de predicción
+
+Cinco casos de referencia, probados contra la API en vivo, que ilustran distintos
+perfiles de riesgo y cómo interactúan las variables del modelo. Cámbiales la URL por
+`http://localhost:8000` si estás probando en local.
+
+**1. Riesgo muy alto** — mal desempeño académico, sin apoyo, trabaja muchas horas
+
+```bash
+curl -X POST https://fase2-abandono-escolar.onrender.com/predict \
+  -H "Content-Type: application/json" \
+  -d '{"promedio_academico": 5.0, "materias_reprobadas": 5, "asistencia": 0.55,
+       "condicion_beca": 0, "distancia_campus": 40.0, "horas_trabajo_semanales": 40,
+       "semestre_actual": 2, "modalidad": 1}'
+# {"probabilidad_abandono":1.0,"clase_predicha":1,"umbral_aplicado":0.4,"nivel_riesgo":"alto"}
+```
+
+**2. Riesgo muy bajo** — excelente desempeño, con apoyo
+
+```bash
+curl -X POST https://fase2-abandono-escolar.onrender.com/predict \
+  -H "Content-Type: application/json" \
+  -d '{"promedio_academico": 9.5, "materias_reprobadas": 0, "asistencia": 0.99,
+       "condicion_beca": 1, "distancia_campus": 1.0, "horas_trabajo_semanales": 0,
+       "semestre_actual": 6, "modalidad": 0}'
+# {"probabilidad_abandono":0.0001,"clase_predicha":0,"umbral_aplicado":0.4,"nivel_riesgo":"bajo"}
+```
+
+**3. Caso límite** — justo cerca del umbral de decisión (0.40)
+
+```bash
+curl -X POST https://fase2-abandono-escolar.onrender.com/predict \
+  -H "Content-Type: application/json" \
+  -d '{"promedio_academico": 7.0, "materias_reprobadas": 1, "asistencia": 0.80,
+       "condicion_beca": 0, "distancia_campus": 15.0, "horas_trabajo_semanales": 15,
+       "semestre_actual": 3, "modalidad": 0}'
+# {"probabilidad_abandono":0.4781,"clase_predicha":1,"umbral_aplicado":0.4,"nivel_riesgo":"medio"}
+```
+
+**4. La beca no siempre compensa** — mal desempeño académico aunque tenga beca
+
+```bash
+curl -X POST https://fase2-abandono-escolar.onrender.com/predict \
+  -H "Content-Type: application/json" \
+  -d '{"promedio_academico": 5.5, "materias_reprobadas": 3, "asistencia": 0.65,
+       "condicion_beca": 1, "distancia_campus": 10.0, "horas_trabajo_semanales": 10,
+       "semestre_actual": 5, "modalidad": 0}'
+# {"probabilidad_abandono":0.9205,"clase_predicha":1,"umbral_aplicado":0.4,"nivel_riesgo":"alto"}
+```
+
+**5. Buen promedio pero mucha carga laboral y modalidad en línea**
+
+```bash
+curl -X POST https://fase2-abandono-escolar.onrender.com/predict \
+  -H "Content-Type: application/json" \
+  -d '{"promedio_academico": 8.2, "materias_reprobadas": 0, "asistencia": 0.75,
+       "condicion_beca": 0, "distancia_campus": 5.0, "horas_trabajo_semanales": 38,
+       "semestre_actual": 7, "modalidad": 1}'
+# {"probabilidad_abandono":0.3978,"clase_predicha":0,"umbral_aplicado":0.4,"nivel_riesgo":"bajo"}
+```
+
+Los casos 3 y 5 son útiles para mostrar el efecto del umbral 0.40: quedan justo a un
+lado y otro de la frontera de decisión, a diferencia de los casos 1, 2 y 4, que son
+inequívocos en cualquier umbral razonable.
+
 ## Pruebas funcionales y casos extremos
 
 ```bash
