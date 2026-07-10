@@ -10,6 +10,10 @@ REST, valida su funcionamiento local y la despliega en la nube.
 **API desplegada y disponible públicamente en Render:**
 **https://fase2-abandono-escolar.onrender.com** — documentación interactiva en
 [`/docs`](https://fase2-abandono-escolar.onrender.com/docs).
+
+- Documentación interactiva (Swagger UI): https://fase2-abandono-escolar.onrender.com/docs
+- Health check: https://fase2-abandono-escolar.onrender.com/health
+
 > El plan gratuito de Render suspende el servicio tras inactividad; la primera
 > petición después de un rato puede tardar ~30-50 s en responder mientras despierta.
 
