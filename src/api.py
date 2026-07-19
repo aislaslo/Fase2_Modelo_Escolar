@@ -1,7 +1,6 @@
 """API REST para el modelo de prediccion de abandono escolar."""
 
 import logging
-import time
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException
@@ -46,9 +45,6 @@ def health() -> dict:
 @app.post("/predict", response_model=PrediccionSalida)
 def predict(estudiante: EstudianteEntrada) -> PrediccionSalida:
     """Devuelve la prediccion de riesgo de abandono para un estudiante."""
-    # INCIDENTE SIMULADO (Actividad 8): demora artificial para reproducir una
-    # dependencia lenta y disparar ALERT-LAT-01. Se revierte en el rollback.
-    time.sleep(3.5)
     try:
         resultado = predecir(estudiante.model_dump())
     except FileNotFoundError as error:
