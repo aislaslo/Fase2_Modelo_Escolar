@@ -42,6 +42,28 @@ repositorio:
 | Casos extremos evaluados | Sección "Pruebas funcionales y casos extremos" + [`docs/validacion_pruebas.md`](docs/validacion_pruebas.md) sección 2.2 |
 | Resultados y conclusiones | [`docs/validacion_pruebas.md`](docs/validacion_pruebas.md) sección 5 |
 
+---
+
+## Actividad 8 — Monitorización, Mantenimiento y Gobernanza Operativa
+
+Construida sobre esta misma Fase 2 (mismo modelo, dataset y API en producción). Todo
+el contenido nuevo vive en [`actividad8/`](actividad8/), con su propio README e
+índice de entregables.
+
+| Requisito (rúbrica) | Dónde verificarlo |
+|---|---|
+| Documento técnico (indicadores, alertas, dashboards, runbooks, drift, respuesta automatizada) | [`actividad8/documento_tecnico.md`](actividad8/documento_tecnico.md) |
+| Evidencia de implementación (capturas MLflow, métricas, alertas, dashboards) | [`actividad8/evidencia/`](actividad8/evidencia/) |
+| Simulación de incidentes (≥2, con runbooks ejecutados y resultados) | [`actividad8/incidentes/registro_incidentes.md`](actividad8/incidentes/registro_incidentes.md) |
+| Código y configuración (monitoreo, alertas, automatización) | [`actividad8/scripts/`](actividad8/scripts/) |
+
+**Lo más relevante:** los 2 incidentes simulados y la detección de drift se
+ejecutaron realmente contra la API en producción
+(`fase2-abandono-escolar.onrender.com`) — no son solo procedimiento documentado. Ver
+[`actividad8/README.md`](actividad8/README.md) para el detalle completo.
+
+---
+
 ## Contenido del repositorio
 
 ```
@@ -50,6 +72,11 @@ repositorio:
 ├── data/                   # Dataset sintetico de entrenamiento
 ├── tests/                  # Pruebas automatizadas (pytest)
 ├── docs/                   # Documentacion tecnica, manual de despliegue y validacion
+├── actividad8/             # Actividad 8: monitorizacion y gobernanza operativa
+│   ├── documento_tecnico.md
+│   ├── scripts/            # monitor.py, alertas_config.yaml, drift, rollback
+│   ├── evidencia/          # capturas MLflow, reporte de drift, log de alertas
+│   └── incidentes/         # registro de incidentes simulados
 ├── Dockerfile
 ├── .dockerignore
 └── requirements.txt
