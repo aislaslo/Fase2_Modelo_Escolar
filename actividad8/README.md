@@ -3,10 +3,10 @@
 > Construida sobre la Fase 2 ([`../README.md`](../README.md)): reutiliza el mismo
 > modelo, dataset y API ya desplegada en
 > **https://fase2-abandono-escolar.onrender.com**. Esta carpeta contiene únicamente
-> lo nuevo de la Actividad 8 — monitoreo proactivo, alertas, detección de drift,
+> lo nuevo de la Actividad 8: monitoreo proactivo, alertas, detección de drift,
 > runbooks y respuesta automatizada a incidentes.
 
-## Mapa de entregables
+## Mapa de entregables de acuerdo a la rúbrica de la Actividad 8
 
 | Entregable (rúbrica) | Dónde verificarlo |
 |---|---|
@@ -46,7 +46,7 @@ mlflow ui --port 5000
 python -m actividad8.scripts.rollback --modo rollback --commit-bueno <hash> --push
 ```
 
-## Resumen de lo ejecutado (no solo documentado)
+## Resumen de lo ejecutado
 
 - **2 incidentes simulados de verdad** contra la API en producción (no un entorno de
   prueba paralelo): latencia degradada y modelo degradado. Ambos con alerta
