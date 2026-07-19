@@ -1,0 +1,88 @@
+# Configuracion de alertas inteligentes -- Actividad 8
+#
+# Define los SLO (Service Level Objectives), el error budget derivado de cada
+# uno, y las reglas de alertamiento con su severidad, impacto operativo y el
+# runbook asociado. El script actividad8/scripts/monitor.py lee este archivo
+# para decidir cuando disparar una alerta durante el monitoreo.
+
+slos:
+  disponibilidad:
+    objetivo: 0.99
+    ventana: "30 dias"
+    error_budget: "1% de las peticiones (~7.2 horas/mes de indisponibilidad tolerada)"
+    metrica: "health_status_code == 200 y predict_status_code == 200"
+
+  latencia_predict:
+    objetivo_p95_ms: 2000
+    ventana: "ciclo de monitoreo (ver monitor.py)"
+    excepcion: >
+      El primer request tras inactividad prolongada puede tardar 30-50s por el
+      cold start del plan gratuito de Render; se excluye del calculo de p95 si
+      esta marcado como cold_start=true, pero se registra igual como metrica.
+
+  calidad_modelo:
+    objetivo: "100% de canary checks correctos por ciclo"
+    metrica: >
+      Dos payloads de referencia (uno de riesgo bajo conocido, uno de riesgo
+      alto conocido) deben clasificarse como clase_predicha=0 y
+      clase_predicha=1 respectivamente en cada ciclo de monitoreo.
+
+  estabilidad_datos:
+    objetivo: "PSI < 0.10 en todas las variables numericas"
+    metrica: "Population Stability Index entre dataset de entrenamiento y datos recientes"
+
+# Reglas de alerta, priorizadas por severidad (P1 = mayor impacto operativo).
+# P1: afecta directamente la confiabilidad de las predicciones o la
+#     disponibilidad del servicio -- requiere accion inmediata.
+# P2: degradacion parcial o riesgo de degradacion futura -- requiere revision
+#     en el corto plazo, no necesariamente accion inmediata.
+# P3: informativo / posible ruido -- se registra pero no dispara notificacion.
+alertas:
+  - id: ALERT-QUALITY-01
+    nombre: "Degradacion de calidad del modelo (canary check fallido)"
+    condicion: "canary_correcto == 0 en 1 o mas ciclos consecutivos"
+    severidad: P1
+    impacto_operativo: >
+      El modelo esta devolviendo clasificaciones incorrectas para casos de
+      referencia conocidos. Riesgo directo: decisiones erroneas sobre
+      estudiantes reales (falsos negativos en riesgo de abandono).
+    accion_runbook: "actividad8/docs/runbook_modelo_degradado.md"
+
+  - id: ALERT-AVAIL-01
+    nombre: "Servicio no disponible"
+    condicion: "health_status_code != 200 O predict_status_code != 200"
+    severidad: P1
+    impacto_operativo: >
+      El servicio no responde. Bloquea por completo el flujo de deteccion de
+      riesgo de abandono para coordinadores y directivos.
+    accion_runbook: "actividad8/docs/runbook_disponibilidad.md"
+
+  - id: ALERT-LAT-01
+    nombre: "Latencia elevada en /predict"
+    condicion: "predict_latency_ms > 2000 durante 3 ciclos consecutivos (excluyendo cold start)"
+    severidad: P2
+    impacto_operativo: >
+      Los coordinadores esperan mas tiempo del esperado por una respuesta; no
+      hay perdida de datos ni respuestas incorrectas, solo degradacion de
+      experiencia.
+    accion_runbook: "actividad8/docs/runbook_latencia.md"
+
+  - id: ALERT-DRIFT-01
+    nombre: "Data drift detectado"
+    condicion: "PSI >= 0.10 en alguna variable numerica (moderado), >= 0.25 (significativo)"
+    severidad: P2
+    impacto_operativo: >
+      La distribucion de los datos de entrada cambio respecto al
+      entrenamiento. No degrada el servicio de forma inmediata, pero
+      incrementa el riesgo de predicciones sesgadas si no se atiende.
+    accion_runbook: "actividad8/docs/runbook_drift.md"
+
+  - id: ALERT-LAT-02
+    nombre: "Cold start detectado (informativo)"
+    condicion: "predict_latency_ms > 5000 en el primer ciclo tras inactividad"
+    severidad: P3
+    impacto_operativo: >
+      Comportamiento esperado del plan gratuito de Render, no indica una
+      degradacion real del servicio. Se registra para no confundirlo con
+      ALERT-LAT-01 en el analisis de tendencia.
+    accion_runbook: "N/A -- no requiere intervencion, ver docs/manual_despliegue.md"
