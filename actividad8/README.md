@@ -11,7 +11,7 @@
 | Entregable (rúbrica) | Dónde verificarlo |
 |---|---|
 | **Documento técnico** — indicadores, alertas, dashboards, runbooks, drift, respuesta automatizada | [`documento_tecnico.md`](documento_tecnico.md) |
-| **Evidencia de implementación** — capturas de MLflow, métricas, alertas, dashboards | [`evidencia/capturas/`](evidencia/capturas/) + [`evidencia/alertas_log.jsonl`](evidencia/alertas_log.jsonl) + [`evidencia/reporte_drift.md`](evidencia/reporte_drift.md) |
+| **Evidencia de implementación** — capturas de MLflow, métricas, alertas, dashboards | [`evidencia_implementacion.md`](evidencia_implementacion.md) (piezas individuales en [`evidencia/`](evidencia/)) |
 | **Simulación de incidentes** — ≥2 incidentes, ejecución de runbooks, resultados | [`incidentes/registro_incidentes.md`](incidentes/registro_incidentes.md) |
 | **Código / configuración** — scripts de monitoreo, automatización, config de alertas | [`scripts/`](scripts/) |
 

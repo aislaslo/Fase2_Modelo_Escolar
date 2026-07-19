@@ -53,7 +53,7 @@ el contenido nuevo vive en [`actividad8/`](actividad8/), con su propio README e
 | Requisito (rúbrica) | Dónde verificarlo |
 |---|---|
 | Documento técnico (indicadores, alertas, dashboards, runbooks, drift, respuesta automatizada) | [`actividad8/documento_tecnico.md`](actividad8/documento_tecnico.md) |
-| Evidencia de implementación (capturas MLflow, métricas, alertas, dashboards) | [`actividad8/evidencia/`](actividad8/evidencia/) |
+| Evidencia de implementación (capturas MLflow, métricas, alertas, dashboards) | [`actividad8/evidencia_implementacion.md`](actividad8/evidencia_implementacion.md) |
 | Simulación de incidentes (≥2, con runbooks ejecutados y resultados) | [`actividad8/incidentes/registro_incidentes.md`](actividad8/incidentes/registro_incidentes.md) |
 | Código y configuración (monitoreo, alertas, automatización) | [`actividad8/scripts/`](actividad8/scripts/) |
 
