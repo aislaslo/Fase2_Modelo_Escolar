@@ -64,6 +64,27 @@ ejecutaron realmente contra la API en producción
 
 ---
 
+## Actividad 9 — Escalabilidad, Optimización de Costos y Gobernanza Responsable
+
+Construida sobre la Fase 2 y la Actividad 8 (mismo modelo, dataset, API y
+observabilidad ya desplegados). Todo el contenido nuevo vive en
+[`actividad9/`](actividad9/), con su propio README e índice de entregables.
+
+| Requisito (rúbrica) | Dónde verificarlo |
+|---|---|
+| Reporte técnico (arquitectura actual, rediseño, métricas, auditoría ética/técnica/legal, plan de escalamiento) | [`actividad9/reporte_tecnico.md`](actividad9/reporte_tecnico.md) |
+| Anexo técnico (costos, desempeño, fairness) | [`actividad9/anexo_tecnico.md`](actividad9/anexo_tecnico.md) |
+| Diagrama de arquitectura (actual vs. propuesta) | [`actividad9/reporte_tecnico.md`](actividad9/reporte_tecnico.md), secciones 1 y 2 |
+| Código y configuración (prueba de carga, auditoría de fairness) | [`actividad9/scripts/`](actividad9/scripts/) |
+
+**Lo más relevante:** la prueba de carga (3 niveles de concurrencia) y la
+auditoría de fairness se ejecutaron realmente — contra la API en producción y
+contra el modelo ya entrenado, respectivamente — no son análisis
+hipotéticos. Ver [`actividad9/README.md`](actividad9/README.md) para el
+detalle completo.
+
+---
+
 ## Contenido del repositorio
 
 ```
@@ -77,6 +98,11 @@ ejecutaron realmente contra la API en producción
 │   ├── scripts/            # monitor.py, alertas_config.yaml, drift, rollback
 │   ├── evidencia/          # capturas MLflow, reporte de drift, log de alertas
 │   └── incidentes/         # registro de incidentes simulados
+├── actividad9/             # Actividad 9: escalabilidad, costos y gobernanza responsable
+│   ├── reporte_tecnico.md  # analisis, rediseno, metricas, auditoria, plan de escalamiento
+│   ├── anexo_tecnico.md    # tablas de costos, desempeno y fairness
+│   ├── scripts/            # prueba_carga.py, auditoria_fairness.py
+│   └── evidencia/          # resultados de carga y reporte de fairness
 ├── Dockerfile
 ├── .dockerignore
 └── requirements.txt
