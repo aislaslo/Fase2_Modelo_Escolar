@@ -26,7 +26,7 @@
 calculadoras públicas de precios de cada proveedor (Google Cloud, s.f.-b;
 Amazon Web Services, 2024) — cifras de referencia, no una cotización real.
 
-### 1.2 Desglose por componente (patrón "antes vs. después", ver Tema 21)
+### 1.2 Desglose por componente (patrón "antes vs. después")
 
 | Componente | Antes (actual) | Después (propuesto) | Ahorro / mejora estimada |
 |---|---|---|---|
