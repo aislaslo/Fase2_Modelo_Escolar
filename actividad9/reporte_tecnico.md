@@ -1,12 +1,9 @@
 # Reporte Técnico — Escalabilidad, Optimización de Costos y Gobernanza Responsable
 
-> Actividad 9 — Gestión de Proyectos de Inteligencia Artificial (Universidad
-> Tecmilenio). Construida sobre la Fase 2 (API de predicción de abandono
+> Actividad 9 — Construida sobre la Fase 2 (API de predicción de abandono
 > escolar) y la Actividad 8 (monitorización y gobernanza operativa), ya
 > desplegadas en `https://fase2-abandono-escolar.onrender.com`.
 > Alumno: Alejandro Islas López (matrícula T07136481).
-> Marco teórico: Tema 21 (escalabilidad y optimización de costos en la nube)
-> y Tema 22 (gobernanza, ética y cumplimiento normativo en IA).
 
 ## Objetivo
 
@@ -147,16 +144,6 @@ flowchart TD
 | Cache de respuestas para payloads repetidos | Optimización de costos | Reduce cómputo redundante en peticiones idénticas (ej. los 5 ejemplos documentados en el README principal), a costo casi nulo de implementación |
 | *Gate* de fairness en CI/CD | Gobernanza | Sin esto, un modelo con sesgo no auditado se despliega igual que cualquier otro cambio de código (ver hallazgo de la sección 4) |
 
-### Principios FinOps aplicados
-
-Siguiendo el Tema 21: la decisión no es "gastar más" ni "gastar menos" de
-forma indiscriminada, sino **redistribuir el gasto hacia donde el dato
-muestra que hay impacto real**. Aquí eso significa: no invertir en
-optimización de modelo (impacto ~0% según datos reales), sí invertir en
-cómputo escalable (impacto directo confirmado en throughput/latencia). El
-detalle de costos proyectados por escenario está en
-[`anexo_tecnico.md`](anexo_tecnico.md), sección 1.
-
 ---
 
 ## 3. Evaluación de métricas de desempeño y costo
@@ -214,22 +201,9 @@ proxy de nivel socioeconómico encontró:
 - La **regla de las 4/5 (EEOC) no se cumple** (cociente 0.7313, umbral
   ≥0.80): el modelo marca "en riesgo" ~13 puntos porcentuales más a
   estudiantes sin beca que a estudiantes con beca.
-- Esto es **consecuencia directa** de que `condicion_beca` es una variable
-  predictiva de peso alto en el modelo (coeficiente -1.6265), no un sesgo
-  espurio oculto vía otra variable correlacionada — es una tensión de
-  fairness conocida en la literatura: **fairness through awareness** (usar
-  el atributo sensible directamente, de forma transparente y auditable) vs.
-  **fairness through unawareness** (excluirlo, arriesgando que el modelo
-  aprenda el mismo sesgo indirectamente vía variables proxy como
-  `distancia_campus`, pero sin poder auditarlo tan claramente).
-- **Postura adoptada:** mantener `condicion_beca` como variable explícita y
-  auditable es preferible a ocultarla, siempre que la disparidad se
-  documente, se monitoree, y se comunique a quien use las predicciones — que
-  es exactamente lo que este documento hace.
 
 ### 4.3 Cumplimiento normativo
 
-Con base en el Tema 22 (EU AI Act como marco de referencia):
 
 - **Clasificación de riesgo:** un sistema de IA usado para evaluar
   estudiantes en una institución educativa corresponde a la categoría de
@@ -241,13 +215,7 @@ Con base en el Tema 22 (EU AI Act como marco de referencia):
   `alertas_log.jsonl` + historial de git, Actividad 8), documentación
   técnica detallada (`docs/documentacion_tecnica.md` de la Fase 2),
   supervisión humana implícita (el modelo informa, un coordinador decide).
-- **Obligaciones pendientes si se usa con datos reales:** gestión formal de
-  riesgos documentada, evaluación de conformidad antes del despliegue,
-  transparencia explícita hacia los estudiantes evaluados (que sepan que un
-  modelo participa en su evaluación), y — dado que los datos serían de
-  estudiantes reales — cumplimiento de protección de datos personales (en
-  México, la LFPDPPP: minimización de datos, consentimiento, límite de
-  finalidad).
+
 
 ### 4.4 Mecanismos de trazabilidad
 
@@ -294,10 +262,6 @@ prioridad:
    de datos y consentimiento informado (LFPDPPP), y comunicar a los
    estudiantes evaluados que un modelo participa en el proceso
    (transparencia, requisito del EU AI Act para sistemas de alto riesgo).
-
-**Conclusión integradora:** escalar este sistema de forma eficiente
-(sección 1-3) y escalarlo de forma ética y responsable (sección 4) no son
-esfuerzos separados — el *gate* de fairness propuesto en la arquitectura
 (sección 2) es, en sí mismo, una decisión de escalabilidad: evita que
 crecer en tráfico signifique también crecer el impacto de un sesgo no
 detectado.
