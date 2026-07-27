@@ -22,6 +22,7 @@
 |---|---|
 | `prueba_carga.py` | Prueba de carga moderada (concurrencia configurable) contra un despliegue real; mide throughput, latencia (p50/p95/p99) y tasa de error; registra en MLflow |
 | `auditoria_fairness.py` | Evalúa el modelo entrenado por grupo de `condicion_beca` (proxy socioeconómico): selection rate, TPR, FPR, demographic parity, equal opportunity, equalized odds y regla de las 4/5 (EEOC) |
+| `graficar_carga.py` | Genera las gráficas de throughput/latencia vs. concurrencia a partir de `evidencia/resultados_prueba_carga.json` (no ejecuta peticiones nuevas) |
 
 ## Uso rápido
 

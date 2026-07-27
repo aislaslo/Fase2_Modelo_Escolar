@@ -78,7 +78,19 @@ servidor en la misma máquina):
 | 10 | 367.7 | 26.4 ms | 36.4 ms | 38.0 ms | 0/30 |
 | 15 | 347.7 | 36.0 ms | 55.0 ms | 57.7 ms | 0/30 |
 
-### 2.3 Comparación e interpretación
+### 2.3 Visualización
+
+![Throughput vs. concurrencia, Render vs. local](evidencia/graficas/throughput_vs_concurrencia.png)
+
+![Latencia p50/p95/p99 vs. concurrencia, Render vs. local](evidencia/graficas/latencia_vs_concurrencia.png)
+
+Cada gráfica usa paneles con escalas independientes (no un eje compartido ni
+doble eje) porque Render y local difieren en 10-22×: en una sola escala,
+Render se vería como una línea plana en cero. Generadas con
+[`scripts/graficar_carga.py`](scripts/graficar_carga.py) a partir de los
+mismos datos de las tablas 2.1 y 2.2, sin ejecutar ninguna petición nueva.
+
+### 2.4 Comparación e interpretación
 
 | | Render Free (producción) | Local (sin restricción) | Diferencia |
 |---|---|---|---|
@@ -92,7 +104,7 @@ no del modelo ni del código de la API — sustentando la recomendación de
 escalar verticalmente y/u horizontalmente (sección 1) en lugar de optimizar
 el modelo.
 
-### 2.4 Uso de recursos (CPU / memoria)
+### 2.5 Uso de recursos (CPU / memoria)
 
 Render (plan Free) no expone una API pública de métricas de
 infraestructura por instancia sin autenticación adicional fuera de esta
