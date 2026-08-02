@@ -92,10 +92,26 @@ institución para actuar.
 
 ## Evidencia visual
 
-- [Captura: pipeline de CI/CD corriendo exitosamente](evidencia/capturas/01_pipeline_run_exitoso.png)
-- [Captura: los 13 pasos del pipeline, cada uno verificado](evidencia/capturas/02_pasos_del_pipeline.png)
-- [Capturas de MLflow: incidentes reales monitoreados](../actividad8/evidencia/capturas/)
-- [Gráficas de la prueba de carga real](../actividad9/evidencia/graficas/)
+**Pipeline de CI/CD corriendo exitosamente en GitHub Actions** (ambos jobs,
+4m26s):
+
+![Pipeline de CI/CD exitoso](evidencia/capturas/01_pipeline_run_exitoso.png)
+
+**Los 13 pasos del pipeline, cada uno verificado** (pruebas, reentrenamiento,
+gate de fairness, build, registro de versión):
+
+![Pasos del pipeline](evidencia/capturas/02_pasos_del_pipeline.png)
+
+**Dashboard real de MLflow durante el incidente 2** (modelo degradado):
+`canary_correcto` en 0 constante y `alertas_disparadas` en 1 desde el primer
+ciclo — detección inmediata, no una simulación de escritorio:
+
+![Dashboard del incidente de modelo degradado](../actividad8/evidencia/capturas/04_incidente02_dashboard_metricas.png)
+
+**Prueba de carga real contra producción vs. local**, que identificó el
+punto exacto de saturación de la infraestructura actual:
+
+![Throughput vs. concurrencia](../actividad9/evidencia/graficas/throughput_vs_concurrencia.png)
 
 ## Narrativa estratégica
 
