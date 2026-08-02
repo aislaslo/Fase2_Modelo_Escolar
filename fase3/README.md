@@ -14,7 +14,7 @@
 | **1. Pipeline automatizado (MLOps/GitOps)** — CI, pruebas de código y datos, versionado de modelo, gate de fairness, despliegue continuo | [`.github/workflows/pipeline.yml`](../.github/workflows/pipeline.yml) (repo raíz — requisito de GitHub Actions) + [`scripts/`](scripts/) + [evidencia de un run real exitoso](evidencia/capturas/) |
 | **2. Documento técnico de operación** — arquitectura, monitoreo, auditoría, métricas, optimización | [`documento_operacion.md`](documento_operacion.md) |
 | **3. Portfolio técnico-estratégico** — problema, valor de negocio, stack, resultados, evidencia visual | [`portfolio.md`](portfolio.md) |
-| **4. Simulación de entrevista y presentación profesional** | [`entrevista/README.md`](entrevista/README.md) — **pendiente**, placeholder a petición explícita |
+| **4. Simulación de entrevista y presentación profesional** | [`entrevista/README.md`](entrevista/README.md) — **pendiente** |
 
 ## Contenido de `scripts/`
 
