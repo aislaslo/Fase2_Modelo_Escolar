@@ -85,13 +85,35 @@ detalle completo.
 
 ---
 
+## Fase 3 — Solución de IA Lista para la Industria (MLOps/GitOps)
+
+Construida sobre la Fase 2 y las Actividades 8 y 9 (mismo modelo, dataset,
+API, monitoreo y auditorías ya construidos). Agrega la capa de
+automatización que antes no existía. Documentación e índice completos en
+[`fase3/`](fase3/).
+
+| Requisito (rúbrica) | Dónde verificarlo |
+|---|---|
+| Pipeline automatizado (CI, pruebas, versionado, gate de fairness, despliegue) | [`.github/workflows/pipeline.yml`](.github/workflows/pipeline.yml) + [`fase3/scripts/`](fase3/scripts/) |
+| Documento técnico de operación | [`fase3/documento_operacion.md`](fase3/documento_operacion.md) |
+| Portfolio técnico-estratégico | [`fase3/portfolio.md`](fase3/portfolio.md) |
+| Simulación de entrevista y presentación profesional | [`fase3/entrevista/README.md`](fase3/entrevista/README.md) — pendiente |
+
+**Lo más relevante:** el pipeline se ejecutó realmente en GitHub Actions
+(no es una simulación) — run \#1, ambos jobs exitosos en 4m26s, incluyendo
+un smoke test contra la API real en producción tras el redeploy de Render.
+Ver [`fase3/README.md`](fase3/README.md) para el detalle completo.
+
+---
+
 ## Contenido del repositorio
 
 ```
+├── .github/workflows/      # pipeline.yml -- CI/CD (Fase 3)
 ├── src/                    # Codigo fuente (generacion de datos, entrenamiento, API)
 ├── models/                 # Artefacto serializado del modelo (.joblib)
 ├── data/                   # Dataset sintetico de entrenamiento
-├── tests/                  # Pruebas automatizadas (pytest)
+├── tests/                  # Pruebas automatizadas: codigo (test_api.py) y datos (test_data.py)
 ├── docs/                   # Documentacion tecnica, manual de despliegue y validacion
 ├── actividad8/             # Actividad 8: monitorizacion y gobernanza operativa
 │   ├── documento_tecnico.md
@@ -103,6 +125,12 @@ detalle completo.
 │   ├── anexo_tecnico.md    # tablas de costos, desempeno y fairness
 │   ├── scripts/            # prueba_carga.py, auditoria_fairness.py
 │   └── evidencia/          # resultados de carga y reporte de fairness
+├── fase3/                  # Fase 3: pipeline MLOps/GitOps, operacion, portfolio
+│   ├── documento_operacion.md
+│   ├── portfolio.md
+│   ├── entrevista/         # pendiente (placeholder)
+│   ├── scripts/            # gate_fairness.py, registrar_version_modelo.py
+│   └── evidencia/          # capturas del pipeline corriendo en GitHub Actions
 ├── Dockerfile
 ├── .dockerignore
 └── requirements.txt
