@@ -4,6 +4,7 @@ import logging
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import RedirectResponse
 
 from src.inference import cargar_modelo, predecir
 from src.schema import EstudianteEntrada, PrediccionSalida
@@ -34,6 +35,12 @@ app = FastAPI(
     version="1.0.0",
     lifespan=lifespan,
 )
+
+
+@app.get("/", include_in_schema=False)
+def raiz() -> RedirectResponse:
+    """Redirige la raiz del sitio a la documentacion interactiva (Swagger UI)."""
+    return RedirectResponse(url="/docs")
 
 
 @app.get("/health")
