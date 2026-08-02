@@ -1,0 +1,11 @@
+[
+  {
+    "commit": "2cd3c6af68e601270a8a49face0ce5c717438a93",
+    "timestamp": "2026-08-02T03:36:19.319238+00:00",
+    "f1_prueba": 0.8493,
+    "f1_minimo_aceptado": 0.8,
+    "aceptado": true,
+    "modelo_sha256_16": "7952cf06c5890316",
+    "dataset_sha256_16": "140c1702ed0ad69f"
+  }
+]

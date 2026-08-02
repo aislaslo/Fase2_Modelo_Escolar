@@ -1,0 +1,7 @@
+{
+  "descripcion": "Linea base de fairness establecida en la Actividad 9 (auditoria real sobre condicion_beca). El gate de CI/CD (fase3/scripts/gate_fairness.py) falla solo si un cambio de modelo empeora estos valores mas alla de la tolerancia -- no exige que el cociente de la regla 4/5 sea >= 0.80, porque ya se determino y documento que ese valor refleja el peso legitimo de condicion_beca como variable predictiva, no un sesgo espurio. Ver actividad9/anexo_tecnico.md seccion 3.",
+  "cociente_4_5_reglas": 0.7313,
+  "demographic_parity_diff": 0.1286,
+  "equal_opportunity_diff": 0.0357,
+  "tolerancia": 0.02
+}
