@@ -182,18 +182,6 @@ medir, y solo entonces afirmar — es exactamente lo que un equipo de
 ingeniería de ML necesita de alguien que se incorpore a operar sistemas de
 IA en producción, no solo a entrenar modelos.
 
-## 🔭 Próximos pasos
-
-> Honestidad sobre lo que falta, no una lista de logros disfrazada.
-
-- Activar *branch protection* para que el pipeline bloquee, no solo valide
-  (decisión pendiente, documentada en `documento_operacion.md` sección 1.2).
-- Escalar horizontalmente solo si el tráfico real lo justifica (principio
-  FinOps ya aplicado en la Actividad 9, no antes).
-- Sustituir el dataset sintético por datos reales, con el cumplimiento de
-  protección de datos correspondiente (ver `actividad9/reporte_tecnico.md`,
-  sección 4.3).
-
 <div align="center">
 
 ---
